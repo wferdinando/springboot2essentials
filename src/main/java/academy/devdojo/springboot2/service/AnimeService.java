@@ -1,6 +1,8 @@
 package academy.devdojo.springboot2.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,10 @@ import academy.devdojo.springboot2.domain.Anime;
 @Service
 public class AnimeService {
 
-	private List<Anime> animes = List.of(new Anime(1L, "Boku No Hero"), new Anime(2L, "Berserk"));
+	private static List<Anime> animes;
+	static {
+		animes = new ArrayList<>(List.of(new Anime(1L, "Boku No Hero"), new Anime(2L, "Berserk")));
+	}
 
 	// private final AnimeRepository animeRepository
 
@@ -22,6 +27,12 @@ public class AnimeService {
 	public Anime findById(long id) {
 		return animes.stream().filter(anime -> anime.getId().equals(id)).findFirst()
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Anime not Found"));
+	}
+
+	public Anime save(Anime anime) {
+		anime.setId(ThreadLocalRandom.current().nextLong(3, 10000));
+		animes.add(anime);
+		return anime;
 	}
 
 }
